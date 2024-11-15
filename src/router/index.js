@@ -1,25 +1,137 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Login from '../views/Login.vue'; 
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+import firebase from 'firebase/compat/app'; 
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+import 'firebase/compat/auth'; 
 
-export default router
+import 'firebase/compat/firestore'; 
+
+import db from '../firebaseDb'  
+
+ 
+
+import { createRouter, createWebHistory } from 'vue-router' 
+
+ 
+
+const routes = [ 
+
+{ 
+
+path: '/', 
+
+name: 'Login', 
+
+component: Login, 
+
+}, 
+
+{ 
+
+path: '/register', 
+
+name: 'Register', 
+
+component: () => 
+
+import( '../views/Register.vue'), 
+
+}, 
+
+{ 
+
+path: '/subscriptionsList', 
+
+name: 'SubscriptionsList', 
+
+component: () => 
+
+import('../components/SubscriptionsList.vue'), 
+
+meta: { 
+
+authRequired: true, 
+
+}, 
+
+}, 
+
+{ 
+
+path: '/edit/:id', 
+
+name: 'edit', 
+
+component: () => 
+
+import('../components/Edit.vue'), 
+
+meta: { 
+
+authRequired: true, 
+
+}, 
+
+}, 
+
+{ 
+
+path: '/create', 
+
+name: 'create', 
+
+component: () => 
+
+import('../components/Create.vue'), 
+
+meta: { 
+
+authRequired: true, 
+
+}, 
+
+}, 
+
+]; 
+
+ 
+
+const router = createRouter({ 
+
+history: createWebHistory(process.env.BASE_URL), 
+
+routes 
+
+}) 
+
+ 
+
+router.beforeEach((to, from, next) => { 
+
+if (to.matched.some(record => record.meta.authRequired)) { 
+
+if (firebase.auth().currentUser) { 
+
+next(); 
+
+} else { 
+
+alert('You must be logged in to see this page'); 
+
+next({ 
+
+path: '/', 
+
+}); 
+
+} 
+
+} else { 
+
+next(); 
+
+} 
+
+}); 
+
+export default router; 
